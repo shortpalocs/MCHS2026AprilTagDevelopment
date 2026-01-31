@@ -12,12 +12,14 @@ import frc.robot.commands.JoystickDriveC;
 import frc.robot.subsystems.DriveTrainSS;
 import frc.robot.subsystems.ShooterSS;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.LoaderSS;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // Import other subsystems and commands as needed
 
 public class RobotContainer {
   private final DriveTrainSS driveTrainSS = new DriveTrainSS();
   private final ShooterSS shooterSS = new ShooterSS();
+  private final LoaderSS loaderSS = new LoaderSS();
   // Instantiate subsystems
 
   public static CommandXboxController controller = new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -35,10 +37,10 @@ public class RobotContainer {
     // Run the fasterTurning command only while X is held
     controller.rightTrigger().whileTrue(shooterSS.shootNormal());
     // Run the shootNormal command only while right trigger is held
-    controller.b().whileTrue(shooterSS.load());
+    controller.b().whileTrue(loaderSS.load());
     // Run the load command only while B is held
-    controller.y().whileTrue(shooterSS.unload());
-    // Run the unload command only while Y is held
+    controller.y().toggleOnTrue(loaderSS.unload());
+    // Run the unload command when Y is pressed, stop when pressed again
   }
 
   public Command getAutonomousCommand() {
