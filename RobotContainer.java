@@ -11,6 +11,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.JoystickDriveC;
 import frc.robot.subsystems.DriveTrainSS;
 import frc.robot.subsystems.ShooterSS;
+import frc.robot.subsystems.VisionSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LoaderSS;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -26,13 +27,20 @@ public class RobotContainer {
   private final DriveTrainSS driveTrainSS = new DriveTrainSS();
   private final ShooterSS shooterSS = new ShooterSS();
   private final LoaderSS loaderSS = new LoaderSS();
+  private final VisionSubsystem vision = new VisionSubsystem();
+  private final AimAtTagC aimCommand = new AimAtTagC(driveTrainSS, vision);
   // Instantiate subsystems
 
-  public static CommandXboxController controller = new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  public CommandXboxController controller = new CommandXboxController(OperatorConstants.kDriverControllerPort);
   // Instantiate the controller
+
 
   public RobotContainer() {
     configureBindings();
+
+
+
+
   }
   // Constructor to set up button bindings
 
@@ -47,6 +55,22 @@ public class RobotContainer {
     // Run the load command only while B is held
     controller.y().toggleOnTrue(loaderSS.unload());
     // Run the unload command when Y is pressed, stop when pressed again
+  
+  
+  
+  
+  // When A is pressed, shift bot over to apriltag
+    controller.a().whileTrue(aimCommand);
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
   }
 
   public Command getAutonomousCommand() {
