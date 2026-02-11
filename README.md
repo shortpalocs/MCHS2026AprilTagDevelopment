@@ -1,11 +1,11 @@
 # 2026 Robot Name
-**NOTICE:** I couln't figure out how to publish an entire 2026 WPILib VS Code project, so this is only the robot folder contents.
+**NOTICE:** Development fork of original 2026 code.
 ## Highlights
 - Command-based paradigm
 - Modular and scalable
 - Makes something move
 ## Overview
-This code is used in Robot Name, team 6488 of MCHS' robot for the 2026 season. I am Orlando Brslik, the coding captain of this team and originator of this repository. This repository exists so that anyone can write/use this code.
+Fork of current 2026 MCHS FRC Code, used for AprilTag & positioning development.
 ## Usage
 It is permissible to share, use, and build upon anything in this repository.
 ## Installation
