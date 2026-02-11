@@ -12,6 +12,8 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 
 
@@ -20,7 +22,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -33,11 +35,11 @@ public class VisionSubsystem extends SubsystemBase {
 
     private static final String CAMERA_NAME = "Main";
 
-    private static final int[] GOAL_IDS = {}; // GET GOAL IDS DO THIS LATER, UNDER HOOPS
+    private static final int[] GOAL_IDS = {25,24,21,20,19,18,27, 4,3 ,2, 11, 10, 9, 8, 5}; // GET GOAL IDS DO THIS LATER, UNDER HOOPS
 
-    private static final double HOOP_HEIGHT = 0; // GOAL HEIGHT OFF FLOOR
+    private static final double HOOP_HEIGHT = 1.8034; // GOAL HEIGHT OFF FLOOR
 
-    private static final double CAMERA_HEIGHT_METERS = 0; // HOW HIGH CAMERA IS OFF FLOOR
+    private static final double CAMERA_HEIGHT_METERS = 0.508; // HOW HIGH CAMERA IS OFF FLOOR
 
     private static final double CAMERA_PITCH = 0.0; // CHECK LATER
 
@@ -108,42 +110,27 @@ public class VisionSubsystem extends SubsystemBase {
         if (latestResult.hasTargets()) {
             PhotonTrackedTarget target = latestResult.getBestTarget();
         
-            if (isValidTarget(target)) {
+            if (target != null && isValidTarget(target)) {
+                hasTargets = true;
                 bestTarget = target;
-            }
-        
-        }
-
-
-        // Check for targets
-        hasTargets = latestResult.hasTargets();
-
-
-        if (hasTargets) {
-            bestTarget = latestResult.getBestTarget();
-        
-
-
-        if(isValidTarget(bestTarget)) {
-            estimatedRobotPose = poseEstimator.update();
+                estimatedRobotPose = poseEstimator.update();
             }
             else {
-                // Not valid shooting target
                 hasTargets = false;
                 bestTarget = null;
                 estimatedRobotPose = Optional.empty();
             }
-        }
+
         else {
-                // No targets visible
-                bestTarget = null;
-                estimatedRobotPose = Optional.empty();
-            }    
-        
-        
-        
-        updateDashboard();
+            // No targets
+            hasTargets = false;
+            bestTarget = null;
+            estimatedRobotPose = Optional.empty();
         }
+        updateDashboard();
+
+
+            }
 
 
     

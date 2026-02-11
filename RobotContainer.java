@@ -59,7 +59,7 @@ public class RobotContainer {
   
   
   
-  // When A is pressed, shift bot over to apriltag
+  // When A is pressed, shift bot aiming over to apriltag
     controller.a().whileTrue(aimCommand);
 
   
