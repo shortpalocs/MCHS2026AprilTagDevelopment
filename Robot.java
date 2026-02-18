@@ -1,13 +1,12 @@
 /*
-* This file contains the Robot class
-* It is the main entry point for the robot code.
-* It controls the flow of modes and initializes the RobotContainer.
-*/
+ * This file contains the Robot class.
+ * It is the main entry point for the robot code.
+ * It controls the flow of modes and initializes the RobotContainer.
+ */
 
 package frc.robot;
 
-// Camera 
-
+// Camera
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
@@ -15,221 +14,150 @@ import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.apriltag.AprilTagDetector;
 import edu.wpi.first.apriltag.AprilTagPoseEstimator;
-import edu.wpi.first.wpilibj.TimedRobot;
 
-import java.io.OutputStream;
-
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-
-
-
+// WPILib
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.cameraserver.CameraServer;
+
+// Geometry
+import edu.wpi.first.math.geometry.Transform3d;
+
+// NetworkTables
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+// OpenCV
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
-  // Declares autonomous command
 
+  private Command m_autonomousCommand;
   private final RobotContainer m_robotContainer;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-    CameraServer.startAutomaticCapture();
   }
-  // Constructer initializes RobotContainer
+
+  @Override
+  public void robotInit() {
+    // Start vision thread
+    Thread visionThread = new Thread(() -> {
+      // Start USB camera
+      UsbCamera camera = CameraServer.startAutomaticCapture();
+      camera.setResolution(640, 480);
+
+      CvSink cvSink = CameraServer.getVideo();
+      CvSource outputStream = CameraServer.putVideo("Processed", 640, 480);
+
+      // Setup AprilTag detector
+      AprilTagDetector detector = new AprilTagDetector();
+      detector.addFamily("tag36h11", 0);
+
+      // Setup pose estimator with camera intrinsics
+      // IMPORTANT: Replace these values with your camera's actual calibration values
+      AprilTagPoseEstimator.Config poseEstConfig = new AprilTagPoseEstimator.Config(
+          0.1651,  // Tag size in meters (6.5 inch tag = 0.1651m) -- VERIFY THIS
+          699.3,   // fx -- REPLACE WITH YOUR CALIBRATION VALUE
+          677.7,   // fy -- REPLACE WITH YOUR CALIBRATION VALUE
+          345.6,   // cx -- REPLACE WITH YOUR CALIBRATION VALUE
+          207.1    // cy -- REPLACE WITH YOUR CALIBRATION VALUE
+      );
+
+      AprilTagPoseEstimator estimator = new AprilTagPoseEstimator(poseEstConfig);
+
+      // Mat objects for image processing
+      Mat image = new Mat();
+      Mat grayImage = new Mat();
+
+      while (!Thread.interrupted()) {
+        // Grab frame from camera
+        if (cvSink.grabFrame(image) == 0) {
+          // Frame grab failed, report error and skip
+          outputStream.notifyError(cvSink.getError());
+          continue;
+        }
+
+        // Convert to grayscale (required for AprilTag detection)
+        Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
+
+        // Detect AprilTags
+        AprilTagDetection[] detections = detector.detect(grayImage);
+
+        // Process each detection
+        for (AprilTagDetection detection : detections) {
+          int id = detection.getId();
+          Transform3d pose = estimator.estimate(detection);
+
+          // Publish tag ID and pose data to NetworkTables
+          NetworkTableInstance.getDefault()
+              .getTable("Vision")
+              .getEntry("tagID")
+              .setInteger(id);
+
+          NetworkTableInstance.getDefault()
+              .getTable("Vision")
+              .getEntry("tagX")
+              .setDouble(pose.getX());
+
+          NetworkTableInstance.getDefault()
+              .getTable("Vision")
+              .getEntry("tagY")
+              .setDouble(pose.getY());
+
+          NetworkTableInstance.getDefault()
+              .getTable("Vision")
+              .getEntry("tagZ")
+              .setDouble(pose.getZ());
+        }
+
+        // Push processed frame to dashboard
+        outputStream.putFrame(image);
+      }
+    });
+
+    visionThread.setDaemon(true); // Don't block JVM shutdown
+    visionThread.start();
+  }
 
   @Override
   public void robotPeriodic() {
+    // Runs the CommandScheduler, which polls buttons and runs commands
     CommandScheduler.getInstance().run();
   }
-  // Runs the CommandScheduler periodically
 
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    // Instantiate the autonomous command
 
     if (m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
-    // Schedule the autonomous command
   }
 
   @Override
   public void teleopInit() {
+    // Cancel autonomous command when teleop starts
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
   }
-  // Cancels autonomous command when teleop starts
-
-
 
   @Override
-  public void robotInit() {
-    new Thread(() -> {
-      // USB camera from the CameraServer
-      
-      UsbCamera camera = CameraServer.startAutomaticCapture();
-      camera.setResolution(640, 480);
-    
-      CvSink cvSink = CameraServer.getVideo();
+  public void disabledInit() {}
 
-      /*  (Optional though) CV source to output process image to dashboard
-      CvSource outputStream = CameraServer.putVideo("Processed", 640, 480)
-      */
+  @Override
+  public void disabledPeriodic() {}
 
-      // Setup AprilTag detector and estimator
-      AprilTagDetector detector = new AprilTagDetector();
-      detector.addFamily("tag36h11", 0);    
+  @Override
+  public void autonomousPeriodic() {}
 
-      // Pose estimator
-      AprilTagPoseEstimator.Config poseEstConfig = new AprilTagPoseEstimator.Config();
+  @Override
+  public void teleopPeriodic() {}
 
-      AprilTagPoseEstimator estimator = new AprilTagPoseEstimator(poseEstConfig);
+  @Override
+  public void simulationInit() {}
 
-
-      // Mat object for image process
-      Mat image = new Mat();
-
-      while(!Thread.interrupted()) {
-        if (cvSink.grabFrame(image) == 0) {
-          // If frame is bad, skip frame
-          OutputStream.notifyError(cvSink.getError());
-          continue;
-        }
-        // Detect AprilTags
-        AprilTagDetection[] detections = detector.detect(image);
-
-        // Process detections
-
-        for (AprilTagDetection detection : detections) {
-          int id = detection.getId();
-          Transform3d pose = estimator.estimate(detection);
-        
-          NetworkTableInstance.getDefault()
-          .getTable("Vision");
-          .getEntry("tagID").setInteger(id);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        }
-        OutputStream.putFrame(image); // Show "images" on dashboard
-      }
-    }).start();
-      
-      
-      
-      
-      
-      
-      
-
-      
-      
-      
-      
-      
-      }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    }
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  @Override
+  public void simulationPeriodic() {}
 }
-
-
-

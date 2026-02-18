@@ -88,14 +88,14 @@ public class VisionSubsystem extends SubsystemBase {
         camera = new PhotonCamera(CAMERA_NAME);
         System.out.println("Camera successfully connected to " + CAMERA_NAME);
 
-        poseEstimator = new PhotonPoseEstimator(
-    fieldLayout,
-    PoseStrategy.MULTI_TAG_PNP,
-    camera,
-    kRobotToCam
-);
+        poseEstimator = new PhotonPoseEstimator(fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, kRobotToCam);
+
         System.out.println("Estimator initialized.");
 
+        System.out.println("Estimator initialized.");
+
+        latestResult = new PhotonPipelineResult();
+  
         latestResult = new PhotonPipelineResult();
         System.out.println("System is ready!");
 
@@ -103,34 +103,29 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
 
-    @Override
-    public void periodic() {
-        latestResult = camera.getLatestResult();
+   @Override
+public void periodic() {
+    latestResult = camera.getLatestResult();
 
-        if (latestResult.hasTargets()) {
-            PhotonTrackedTarget target = latestResult.getBestTarget();
-        
-            if (target != null && isValidTarget(target)) {
-                hasTargets = true;
-                bestTarget = target;
-                estimatedRobotPose = poseEstimator.update();
-            }
-            else {
-                hasTargets = false;
-                bestTarget = null;
-                estimatedRobotPose = Optional.empty();
-            }
-
-        else {
-            // No targets
+    if (latestResult.hasTargets()) {
+        PhotonTrackedTarget target = latestResult.getBestTarget();
+        if (target != null && isValidTarget(target)) {
+            hasTargets = true;
+            bestTarget = target;
+            estimatedRobotPose = poseEstimator.update(latestResult);
+        } else {
             hasTargets = false;
             bestTarget = null;
             estimatedRobotPose = Optional.empty();
         }
-        updateDashboard();
+    } else {
+        hasTargets = false;
+        bestTarget = null;
+        estimatedRobotPose = Optional.empty();
+    }
 
-
-            }
+    updateDashboard();
+}
 
 
     
@@ -190,6 +185,11 @@ public class VisionSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Target count: ", getTargetCount());
         getTargetYaw().ifPresent(yaw -> SmartDashboard.putNumber("Target Yaw", yaw));
         
+        if (!hasTargets) {
+            SmartDashboard.putNumber("Target Yaw", 0.0);
+        }
+    
+    
     }
 
     
