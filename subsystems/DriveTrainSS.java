@@ -45,7 +45,19 @@ public class DriveTrainSS extends SubsystemBase {
 
 
 
+  public void drive(double xSpeed, double ySpeed, double rotation) {
+    double leftSpeed = xSpeed + rotation;
+    double rightSpeed = xSpeed - rotation;
 
+    double maxMagnitude = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+    if (maxMagnitude > 1.0) {
+      leftSpeed /= maxMagnitude;
+      rightSpeed /= maxMagnitude;
+    }
+
+    setMotorSpeeds(leftSpeed, rightSpeed);
+
+  }
 
 
 

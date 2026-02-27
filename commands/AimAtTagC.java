@@ -2,10 +2,10 @@ package frc.robot.commands;
 
 import java.util.Optional;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.MathUtil;
 
-import frc.robot.subsystems.driveTrainSS;
+import frc.robot.subsystems.DriveTrainSS;
 import frc.robot.subsystems.VisionSubsystem;
 
 public class AimAtTagC extends Command {
@@ -21,7 +21,7 @@ public class AimAtTagC extends Command {
         this.drive = drive;
         this.vision = vision;
 
-        addRequirements(drive);
+        addRequirements(drive, vision);
     }
 
     @Override
@@ -57,7 +57,15 @@ public class AimAtTagC extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return vision.getTargetYaw()
+        .map(yaw -> Math.abs(yaw) < DEAD_BAND)
+        .orElse(false);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        drive.drive(0,0,0);
+        // If fails, set drive to 
     }
 
     
