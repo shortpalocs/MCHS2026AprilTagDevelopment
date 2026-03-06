@@ -10,11 +10,13 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AimAtTagC;
 import frc.robot.commands.Autos;
 import frc.robot.commands.JoystickDriveC;
+import frc.robot.commands.shootWhileMoving;
 import frc.robot.subsystems.DriveTrainSS;
 import frc.robot.subsystems.ShooterSS;
 import frc.robot.subsystems.VisionSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LoaderSS;
+import frc.robot.commands.shootWhileMoving;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 // Import other subsystems and commands as needed
 
@@ -30,6 +32,7 @@ public class RobotContainer {
   private final LoaderSS loaderSS = new LoaderSS();
   private final VisionSubsystem vision = new VisionSubsystem();
   private final AimAtTagC aimCommand = new AimAtTagC(driveTrainSS, vision);
+  private final shootWhileMoving SWM = new shootWhileMoving(driveTrainSS, shooterSS);
   // Instantiate subsystems
 
   public static CommandXboxController controller = new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -48,7 +51,7 @@ public class RobotContainer {
   private void configureBindings() {
     driveTrainSS.setDefaultCommand(new JoystickDriveC(driveTrainSS));
     // Set default command for driving
-    controller.x().whileTrue(driveTrainSS.fasterTurning());
+    controller.leftBumper().whileTrue(driveTrainSS.fasterTurning());
     // Run the fasterTurning command only while X is held
     controller.rightTrigger().whileTrue(shooterSS.shootNormal());
     // Run the shootNormal command only while right trigger is held
@@ -62,7 +65,7 @@ public class RobotContainer {
   
   // When A is pressed, shift bot aiming over to apriltag
     controller.a().whileTrue(aimCommand);
-
+    controller.x().whileTrue(SWM);
   
   
   
