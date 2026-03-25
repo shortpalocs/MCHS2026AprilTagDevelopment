@@ -26,7 +26,7 @@ public class DriveTrainSS extends SubsystemBase {
 
   public Command fasterTurning() {
     return run(
-        () -> {             // TODO: MAKE / FIGURE OUT CONTROLLER OBJECT
+        () -> {             
           double forward = -RobotContainer.controller.getLeftY() * 1.0; // Max forward speed
           double rotation = RobotContainer.controller.getRightX() * 1.0; // Max rotation speed
           double leftSpeed = forward + rotation; // Arcade drive calculation

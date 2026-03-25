@@ -19,4 +19,10 @@ public class ShooterSS extends SubsystemBase {
     // Start shooter while held, stop when released
     return startEnd(() -> setShooterSpeed(1.0), () -> setShooterSpeed(0));
   }
+
+
+public Command reverseShooter() {
+  return startEnd(() -> setShooterSpeed(-0.5), () -> setShooterSpeed(0));
+}
+
 }

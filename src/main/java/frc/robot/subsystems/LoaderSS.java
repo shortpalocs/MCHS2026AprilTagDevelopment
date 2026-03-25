@@ -6,7 +6,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class LoaderSS extends SubsystemBase {
-  private final Talon loader = new Talon(Constants.ShooterConstants.loader);
+   private final Talon loader = new Talon(Constants.ShooterConstants.loader);
+  // private final TalonFX intakeMotor = new TalonFX(Constants.ShooterConstants.PLACEHOLDER); // TODO: GET CAN ID!! Set CANID in Constants.java
 
   public void setLoaderSpeed(double speed) {
     loader.set(speed);

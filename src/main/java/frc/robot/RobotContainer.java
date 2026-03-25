@@ -65,7 +65,10 @@ public class RobotContainer {
   
   // When A is pressed, shift bot aiming over to apriltag
     controller.a().whileTrue(aimCommand);
+
+    // shootWhileMoving command
     controller.x().whileTrue(SWM);
+
   
   
   

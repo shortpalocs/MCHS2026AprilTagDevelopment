@@ -15,9 +15,13 @@ public final class Constants {
   public static class ShooterConstants {
     public static final int shooter = 2; // PWM port
     public static final int loader = 3; // PWM port
+    public static final int intakeAssistMotorPhe = 1; // TODO
   }
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0; // USB port
   }
+
+
+
 }

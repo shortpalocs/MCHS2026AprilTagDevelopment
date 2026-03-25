@@ -58,9 +58,7 @@ public class AimAtTagC extends Command {
 
     @Override
     public boolean isFinished() {
-        return vision.getTargetYaw()
-        .map(yaw -> Math.abs(yaw) < DEAD_BAND)
-        .orElse(false);
+        return false;
     }
 
     @Override

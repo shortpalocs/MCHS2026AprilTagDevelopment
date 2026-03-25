@@ -30,14 +30,19 @@ public class shootWhileMoving extends Command {
     public void execute() {
 
 
-        System.out.println("Excutue uet utuawtbuifaeioiauia");
+        System.out.println("Executing.");
 
 
         dt.setMotorSpeeds(0.5, 0.5);
-        sht.shootNormal();
-
-
+        sht.setShooterSpeed(1);
     }
+
+
+    public void end(boolean interrupted) {
+    dt.setMotorSpeeds(0, 0);
+    sht.setShooterSpeed(0);
+        }
+
 
 
     public boolean isFinished() {
