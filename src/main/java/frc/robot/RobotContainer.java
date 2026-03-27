@@ -55,6 +55,7 @@ public class RobotContainer {
     // Run the fasterTurning command only while X is held
     controller.rightTrigger().whileTrue(shooterSS.shootNormal());
     // Run the shootNormal command only while right trigger is held
+    controller.leftTrigger().whileTrue(shooterSS.reverseShooter());
     controller.b().whileTrue(loaderSS.load());
     // Run the load command only while B is held
     controller.y().toggleOnTrue(loaderSS.unload());
@@ -65,7 +66,7 @@ public class RobotContainer {
   
   // When A is pressed, shift bot aiming over to apriltag
     controller.a().whileTrue(aimCommand);
-
+    controller.rightBumper().toggleOnTrue(driveTrainSS.turn180());
     // shootWhileMoving command
     controller.x().whileTrue(SWM);
 

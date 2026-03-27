@@ -43,6 +43,13 @@ public class DriveTrainSS extends SubsystemBase {
   }
 
 
+  public Command turn180() {
+    return run(() -> setMotorSpeeds(0.5, 0.5))
+.withTimeout(0.0)
+        .andThen(runOnce(() -> setMotorSpeeds(0, 0)));
+}
+
+
 
 
   public void drive(double xSpeed, double ySpeed, double rotation) {
