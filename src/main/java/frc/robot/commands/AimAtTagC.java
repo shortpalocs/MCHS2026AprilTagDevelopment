@@ -29,7 +29,7 @@ public class AimAtTagC extends Command {
     public void execute() {
         Optional<Double> yawOpt = vision.getTargetYaw();
 
-        if (yawOpt.isPresent()) {
+        if (yawOpt.isPresent()) { 
             double yaw = yawOpt.get();
 
 
@@ -64,7 +64,6 @@ public class AimAtTagC extends Command {
     @Override
     public void end(boolean interrupted) {
         drive.drive(0,0,0);
-        // If fails, set drive to 
     }
 
     
