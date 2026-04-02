@@ -12,10 +12,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.AimAtTagC;
 import frc.robot.RobotContainer;
+import com.revrobotics.*;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class DriveTrainSS extends SubsystemBase {
-  private final Talon leftSide = new Talon(Constants.DriveTrainConstants.leftSide);
-  private final Talon rightSide = new Talon(Constants.DriveTrainConstants.rightSide);
+  private final SparkMax leftSide = new SparkMax(1, MotorType.kBrushed);
+  private final SparkMax leftSide2 = new SparkMax(2, MotorType.kBrushed);
+
+  private final SparkMax rightSide = new SparkMax(3, MotorType.kBrushed);
+  private final SparkMax rightSide2 = new SparkMax(4, MotorType.kBrushed);
+
+  
   // Instantiate motor controllers
 
   public void setMotorSpeeds(double leftSpeed, double rightSpeed) {

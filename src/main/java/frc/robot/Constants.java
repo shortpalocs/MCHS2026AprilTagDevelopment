@@ -8,19 +8,23 @@ package frc.robot;
 
 public final class Constants {
   public static class DriveTrainConstants {
-    public static final int leftSide = 0; // PWM port
-    public static final int rightSide = 1; // PWM port
+    public static final int leftSide = 1; // CAN ID
+    public static final int rightSide = 2; // CAN ID
   }
 
   public static class ShooterConstants {
     public static final int shooter = 2; // PWM port
     public static final int loader = 3; // PWM port
     public static final int intakeAssistMotorPhe = 1; // TODO
+
+    
   }
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0; // USB port
   }
+
+  
 
 
 

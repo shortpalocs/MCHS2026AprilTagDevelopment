@@ -9,10 +9,13 @@ import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import com.revrobotics.*;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 
 public class ShooterSS extends SubsystemBase {
-  private final Talon shooter = new Talon(Constants.ShooterConstants.shooter);
+  private final SparkMax shooter = new SparkMax(6, MotorType.kBrushless); 
   public void setShooterSpeed(double speed) {
     shooter.set(speed);
   }
