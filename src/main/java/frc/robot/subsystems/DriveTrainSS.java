@@ -17,18 +17,17 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class DriveTrainSS extends SubsystemBase {
-  private final SparkMax leftSide = new SparkMax(1, MotorType.kBrushed);
-  private final SparkMax leftSide2 = new SparkMax(2, MotorType.kBrushed);
+  private final  Talon leftSide = new Talon(Constants.DriveTrainConstants.leftSide);
+  private final Talon rightSide = new Talon(Constants.DriveTrainConstants.rightSide);
 
-  private final SparkMax rightSide = new SparkMax(3, MotorType.kBrushed);
-  private final SparkMax rightSide2 = new SparkMax(4, MotorType.kBrushed);
+
 
   
   // Instantiate motor controllers
 
   public void setMotorSpeeds(double leftSpeed, double rightSpeed) {
     leftSide.set(-leftSpeed * 1.0);
-    rightSide.set(rightSpeed * 1.0);
+    rightSide.set(-rightSpeed * 1.0);
   }
   // Method to set motor speeds
 

@@ -34,8 +34,8 @@ public class RobotContainer {
   private final DriveTrainSS driveTrainSS = new DriveTrainSS();
   private final ShooterSS shooterSS = new ShooterSS();
   private final LoaderSS loaderSS = new LoaderSS();
-  private final VisionSubsystem vision = new VisionSubsystem();
-  private final AimAtTagC aimCommand = new AimAtTagC(driveTrainSS, vision);
+ // private final VisionSubsystem vision = new VisionSubsystem();
+  // private final AimAtTagC aimCommand = new AimAtTagC(driveTrainSS, vision);
   private final shootWhileMoving SWM = new shootWhileMoving(driveTrainSS, shooterSS);
   // Instantiate subsystems
 
@@ -75,7 +75,7 @@ public class RobotContainer {
   
   
   // When A is pressed, shift bot aiming over to apriltag
-    controller.a().whileTrue(aimCommand);
+  //  controller.a().whileTrue(aimCommand);
     controller.rightBumper().toggleOnTrue(driveTrainSS.turn180());
     // shootWhileMoving command
     controller.x().whileTrue(SWM);
@@ -109,7 +109,7 @@ public class RobotContainer {
     ps5.circle().whileTrue(loaderSS.load());
     ps5.triangle().toggleOnTrue(loaderSS.unload());
 
-    controller.x().whileTrue(aimCommand);
+    //controller.x().whileTrue(aimCommand);
     ps5.R1().toggleOnTrue(driveTrainSS.turn180());
     ps5.square().whileTrue(SWM);
 
